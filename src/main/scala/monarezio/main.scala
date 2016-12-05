@@ -1,5 +1,6 @@
 package monarezio
 
+import monarezio.minesweeper.MinesweeperUI
 import monarezio.minesweeper.domain.Minesweeper
 
 /**
@@ -7,6 +8,6 @@ import monarezio.minesweeper.domain.Minesweeper
   */
 object main {
   def main(args: Array[String]): Unit = {
-    new Minesweeper(10, 10, 10)
+    new MinesweeperUI(10, 10, 10).play()
   }
 }
