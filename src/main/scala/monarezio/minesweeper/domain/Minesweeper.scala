@@ -44,8 +44,21 @@ class Minesweeper(val rows: Int, val columns: Int, val mines: Int) {
 
   def reveal(x: Int, y: Int): Unit = {
     vissibleFields = vissibleFields.updated(x, vissibleFields(x).updated(y, true))
+    if(getValue(x, y) == 0) {
+      if(isPointOnFieldAndIsHidden(x + 1, y)) reveal(x + 1, y)
+      if(isPointOnFieldAndIsHidden(x + 1, y + 1)) reveal(x + 1, y + 1)
+      if(isPointOnFieldAndIsHidden(x, y + 1)) reveal(x, y + 1)
+      if(isPointOnFieldAndIsHidden(x - 1, y)) reveal(x - 1, y)
+      if(isPointOnFieldAndIsHidden(x - 1, y - 1)) reveal(x - 1, y - 1)
+      if(isPointOnFieldAndIsHidden(x, y - 1)) reveal(x, y - 1)
+      if(isPointOnFieldAndIsHidden(x + 1, y - 1)) reveal(x + 1, y - 1)
+      if(isPointOnFieldAndIsHidden(x - 1, y + 1)) reveal(x - 1, y + 1)
+    }
   }
 
+  private def isPointOnFieldAndIsHidden(x: Int, y: Int): Boolean = {
+    x >= 0 && x <= rows && y >= 0 && y <= columns && !vissibleFields(x)(y)
+  }
 
   /**
     * Created by samuelkodytek on 05/12/2016.

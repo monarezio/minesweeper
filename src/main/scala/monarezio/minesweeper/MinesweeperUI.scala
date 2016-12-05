@@ -15,6 +15,7 @@ class MinesweeperUI(val rows: Int, val columns: Int, val mines: Int) {
       (0 to columns).foreach(j => print(domain.getValue(i, j) + "|"))
       println()
     })
+    println()
   }
 
   def renderHidden(): Unit = {
@@ -34,7 +35,7 @@ class MinesweeperUI(val rows: Int, val columns: Int, val mines: Int) {
   }
 
   def play(): Unit = {
-    renderShown()
+    renderHidden()
 
     val coordinates = listen()
     domain.reveal(coordinates._1, coordinates._2)

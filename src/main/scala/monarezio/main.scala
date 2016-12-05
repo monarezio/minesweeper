@@ -8,6 +8,8 @@ import monarezio.minesweeper.domain.Minesweeper
   */
 object main {
   def main(args: Array[String]): Unit = {
-    new MinesweeperUI(10, 10, 10).play()
+    val m = new MinesweeperUI(10, 10, 10)
+    m.renderShown()
+    m.play()
   }
 }
