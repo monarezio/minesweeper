@@ -12,7 +12,7 @@ class Minesweeper(val rows: Int, val columns: Int, val mines: Int) {
   val handler = new Handler()
 
   var fields = generate()
-  var vissibleFields = (0 to rows).map(i => (0 to columns).map(i => false).toList).toList
+  var vissibleFields: List[List[Type]] = (0 to rows).map(i => (0 to columns).map(i => Hidden).toList).toList
 
   /**
     *
@@ -39,30 +39,57 @@ class Minesweeper(val rows: Int, val columns: Int, val mines: Int) {
       (x - 1, y - 1) == i ||
       (x + 1, y - 1) == i ||
       (x - 1, y + 1) == i
-    ).size //#ToDumbToUseBiggerThenOrSmallerThen :'(
+    ).size //#TooDumbToUseBiggerThenOrSmallerThen :'(
   }
 
+  /**
+    * Spreads visibility like cancer :)
+    * @param x
+    * @param y
+    */
   def reveal(x: Int, y: Int): Unit = {
-    vissibleFields = vissibleFields.updated(x, vissibleFields(x).updated(y, true))
-    if(getValue(x, y) == 0) {
-      if(isPointOnFieldAndIsHidden(x + 1, y)) reveal(x + 1, y)
-      if(isPointOnFieldAndIsHidden(x + 1, y + 1)) reveal(x + 1, y + 1)
-      if(isPointOnFieldAndIsHidden(x, y + 1)) reveal(x, y + 1)
-      if(isPointOnFieldAndIsHidden(x - 1, y)) reveal(x - 1, y)
-      if(isPointOnFieldAndIsHidden(x - 1, y - 1)) reveal(x - 1, y - 1)
-      if(isPointOnFieldAndIsHidden(x, y - 1)) reveal(x, y - 1)
-      if(isPointOnFieldAndIsHidden(x + 1, y - 1)) reveal(x + 1, y - 1)
-      if(isPointOnFieldAndIsHidden(x - 1, y + 1)) reveal(x - 1, y + 1)
+    if(vissibleFields(x)(y) != Flag) {
+      def innerReveal(x: Int, y: Int): Unit = {
+        vissibleFields = vissibleFields.updated(x, vissibleFields(x).updated(y, Vissible))
+        if(getValue(x, y) == 0) {
+          if(isPointOnFieldAndIsHidden(x + 1, y)) innerReveal(x + 1, y)
+          if(isPointOnFieldAndIsHidden(x + 1, y + 1)) innerReveal(x + 1, y + 1)
+          if(isPointOnFieldAndIsHidden(x, y + 1)) innerReveal(x, y + 1)
+          if(isPointOnFieldAndIsHidden(x - 1, y)) innerReveal(x - 1, y)
+          if(isPointOnFieldAndIsHidden(x - 1, y - 1)) innerReveal(x - 1, y - 1)
+          if(isPointOnFieldAndIsHidden(x, y - 1)) innerReveal(x, y - 1)
+          if(isPointOnFieldAndIsHidden(x + 1, y - 1)) innerReveal(x + 1, y - 1)
+          if(isPointOnFieldAndIsHidden(x - 1, y + 1)) innerReveal(x - 1, y + 1)
+        }
+      }
+      innerReveal(x, y)
     }
   }
 
+  def flag(x: Int, y: Int): Unit = {
+    if(vissibleFields(x)(y) != Vissible)
+      vissibleFields = vissibleFields.updated(x, vissibleFields(x).updated(y, Flag))
+  }
+
+  def question(x: Int, y: Int): Unit = {
+    if(vissibleFields(x)(y) != Vissible)
+      vissibleFields = vissibleFields.updated(x, vissibleFields(x).updated(y, QuestionMark))
+  }
+
+  def hasWon(): Boolean = {
+    vissibleFields.map(i => i.filter(j => j == Hidden).size).sum == fields.size
+  }
+
+  def isDead(): Boolean = !fields.filter(i => vissibleFields(i._1)(i._2) == Vissible).isEmpty
+
+
   private def isPointOnFieldAndIsHidden(x: Int, y: Int): Boolean = {
-    x >= 0 && x <= rows && y >= 0 && y <= columns && !vissibleFields(x)(y)
+    x >= 0 && x <= rows && y >= 0 && y <= columns && vissibleFields(x)(y) != Vissible
   }
 
   /**
     * Created by samuelkodytek on 05/12/2016.
-    * A Mutable class to serve generating random bomb poistions
+    * A Mutable class to serve generating random bomb positions
     */
   class Handler {
     var saved: List[(Int, Int)] = List()
