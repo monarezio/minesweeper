@@ -1,2 +1,2 @@
-# minesweeper
+# Minesweeper
 Minesweeper implementation in scala
